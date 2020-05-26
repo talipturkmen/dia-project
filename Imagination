@@ -1,0 +1,44 @@
+# I have chosen arbitrary variables everywhere: feel free to discuss and change them, I put no sense in them
+
+# Here we can write all the context we're supposed to imagine with steps 1. and 2..
+
+
+#################################################### Step 1 ####################################################
+
+
+# Time horizon, days
+T = 100
+# Let's imagine we have a total budget of 100€/day
+
+
+## WEBSITES ##
+# 4 websites publishing both content and >3 ads ??
+# how?
+
+# I guess we should associate at each website a curve #clicks=f(bid) as in the exercises
+# but what else?
+def n(x):
+    return [ 100*(1-np.exp(-5*x)), 200*(1-np.exp(-5*x)), 100*(1-np.exp(-4*x + 7 * x**2)),
+    150*(1-np.exp(-6*x + 2 * x**2)) ]
+# in fact we should specify it with respect to classes of users
+
+
+# Let's have a summary table of the websites: [website 1, website 2, website 3, website 4]
+# and "website i" is itself a table containing:
+# number of available slots, daily budget for the associated subcampaign
+# from the index i in the table we can get n[i](x) the fonction #clicks=f(bid) associated to this website
+# (n(x)[0] corresponds to website[0] the 1st website then)
+websites = np.array( [ [5,10.0], [7,40.0], [4,15.0], [10,35.0] ] )
+
+## CLASSES OF USERS ##
+# 3 classes of users/subcampaign
+# 2 binary features/user - a 2-entry table - 1st feature: young/old (0/1), 2nd feature: woman/man (0/1)
+def fclass(features):
+  if features[0] == 0:
+    return 0
+  if features == [1,0]:
+    return 1
+  if features == [1,1]:
+    return 2
+# if we keep the idea of a man watch, we have thus 3 classes of users: women (who will offer it), young men and old men
+# to do: imagine a proba for each class of user to appear depending on the website
