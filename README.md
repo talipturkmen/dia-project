@@ -33,7 +33,7 @@ The goal is to model a scenario in which an advertiser aims at sponsoring a prod
 **7**. Plot the cumulative regret of the publisher and of the advertiser, separately, when they are learning simultaneously.
 
 # TODO
-- [ ] Environment Building
+- [x] Environment Building
 - [ ] Matching Algorithm-Point 3 (Anne, Talip)
 - [ ] Context Generation-Point 4 (Alireza, Julian)
 
