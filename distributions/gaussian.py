@@ -1,3 +1,8 @@
+"""
+Created on 28/05/20
+@author: Talip Turkmen
+"""
+
 from distributions.probability_distribution import Probability_Distribution
 import numpy as np
 

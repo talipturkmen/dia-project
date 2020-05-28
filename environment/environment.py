@@ -1,3 +1,9 @@
+"""
+Created on 28/05/20
+@author: Talip Turkmen
+"""
+
+
 class Environment:
     def __init__(self, subcampaigns):
         self.subcampaigns = subcampaigns
@@ -7,6 +13,7 @@ class Environment:
             return self.subcampaigns[id]
         return False
 
+    ## TODO WILL CHANGE
     def get_combinations(self):
         result = [[]]
         for subcampaign in self.subcampaigns:

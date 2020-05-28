@@ -1,23 +1,34 @@
+"""
+Created on 28/05/20
+@author: Talip Turkmen
+"""
+
 from utilities.partitioning import partition
 
 
 class Subcampaign:
 
-    def __init__(self, classes):
+    def __init__(self, classes, slots):
         self.classes = classes
+        self.slots = slots
+        self.number_of_interested_users = []
 
-    def sample(self, x, save_sample=True):
-        return tuple([c.sample(x / len(self.classes), save_sample) for c in self.classes])
+    def get_slot(self, id):
+        if id < len(self.slots):
+            return self.slots[id]
+        return False
 
-    def get_real(self, x):
-        val = 0
-        for c in self.classes:
-            val = val + c.real_function_value(x / len(self.classes))
-        return val
+    def sample(self, save_sample=True):
+        self.number_of_interested_users = tuple([c.sample(save_sample) for c in self.classes])
+        return self.number_of_interested_users
 
     def get_classes_ids(self):
         return tuple([c.id for c in self.classes])
 
+    def get_class_names(self):
+        return tuple([c.name for c in self.classes])
+
+    ## TODO WILL CHANGE
     def disaggregate(self):
         class_indices = list(range(len(self.classes)))
         all_partitions = partition(class_indices)
