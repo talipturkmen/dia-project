@@ -13,7 +13,7 @@ from config.config import get_configuration
 def build_environment(configuration):
     subcampaigns = []
     # LOOP OVER SUBCAMPAIGNS
-    for subcampaign_data in configuration:
+    for ii, subcampaign_data in enumerate(configuration):
         classes_ = []
         slots = []
         slot_classes = []
@@ -44,30 +44,30 @@ def build_environment(configuration):
                 if j % slot_id == i:
                     classes.append(slot_classes[j])
 
-            slots.append(Slot(classes))
+            slots.append(Slot(i, classes))
 
-        subcampaigns.append(Subcampaign(classes_, slots))
+        subcampaigns.append(Subcampaign(ii, classes_, slots))
 
     return Environment(subcampaigns)
 
+    if __name__ == '__main__':
+        ### FOR TESTING PURPOSES ####
+        ### PLEASE SEE THE USAGE BELOW FOR SAMPLING ####
+        env = build_environment(get_configuration())
+        subcampaign0 = env.get_subcampaign(0)
+        interested_users = subcampaign0.sample()
 
-if __name__ == '__main__':
-    ### FOR TESTING PURPOSES ####
-    ### PLEASE SEE THE USAGE BELOW FOR SAMPLING ####
-    env = build_environment(get_configuration())
-    subcampaign0 = env.get_subcampaign(0)
-    interested_users = subcampaign0.sample()
+        print('Expected interested users per class for subcampaign0', interested_users)
 
-    print('Expected interested users per class for subcampaign0', interested_users)
+        slot0 = subcampaign0.get_slot(0)
+        expected_click_for_slot0_and_class2 = slot0.sample(x=80, interested_users=interested_users[1], class_id=1)
+        print(
+            'Expected number of clicks for the subcampaign:0 and the slot:0 and class 2 with bid:80',
+            expected_click_for_slot0_and_class2)
 
-    slot0 = subcampaign0.get_slot(0)
-    expected_click_for_slot0_and_class2 = slot0.sample(x=80, interested_users=interested_users[1], class_id=1)
-    print(
-        'Expected number of clicks for the subcampaign:0 and the slot:0 and class 2 with bid:80',
-        expected_click_for_slot0_and_class2)
-
-    expexted_click_for_all_classes_and_slot0 = slot0.sample_for_all_classes(x=80, interested_users=interested_users, )
-    print(
-        'Expected number of clicks for the subcampaign:0 and the slot:0 and all classes with bid:80 ',
-        expexted_click_for_all_classes_and_slot0)
-    exit(0)
+        expexted_click_for_all_classes_and_slot0 = slot0.sample_for_all_classes(x=80,
+                                                                                interested_users=interested_users, )
+        print(
+            'Expected number of clicks for the subcampaign:0 and the slot:0 and all classes with bid:80 ',
+            expexted_click_for_all_classes_and_slot0)
+        exit(0)

@@ -8,7 +8,8 @@ from utilities.partitioning import partition
 
 class Subcampaign:
 
-    def __init__(self, classes, slots):
+    def __init__(self, name, classes, slots):
+        self.name = name
         self.classes = classes
         self.slots = slots
         self.number_of_interested_users = []

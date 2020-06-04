@@ -5,7 +5,8 @@ Created on 28/05/20
 
 
 class Slot:
-    def __init__(self, classes):
+    def __init__(self, id, classes):
+        self.id = id
         self.classes = classes
         self.samples = []
 
@@ -40,7 +41,6 @@ class Slot:
         return clicks
 
     def previous_clicks(self, class_id):
-
         return self.classes[class_id].samples
 
     def get_real(self, x):
