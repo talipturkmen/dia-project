@@ -1,7 +1,12 @@
-from learner import GPTS
+"""
+Created on 09/06/20
+@author: Talip Turkmen
+"""
+
+from learner.GPTS import GPTS
 
 
-class Slot_algo:
+class SlotAlgorithm:
     def __init__(self, subcampaign, slot, arms, GPTS_prior=None):
         self.subcampaign = subcampaign
         self.slot = slot

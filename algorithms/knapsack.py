@@ -1,4 +1,10 @@
+"""
+Created on 09/06/20
+@author: Talip Turkmen
+"""
+
 import math
+
 import numpy as np
 
 

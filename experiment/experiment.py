@@ -1,7 +1,14 @@
+"""
+Created on 09/06/20
+@author: Talip Turkmen
+"""
+
+import numpy as np
+
 from algorithms.knapsack import Knapsack
-from experiment.subcampaign_algo import Slot_algo
-from utilities.rounding import round_to_nearest_feasible_superarm
+from experiment.subcampaign_algo import SlotAlgorithm
 from utilities.print_functions import prettify_super_arm
+from utilities.rounding import round_to_nearest_feasible_superarm
 
 
 class Experiment:
@@ -14,23 +21,24 @@ class Experiment:
     def perform(self, timesteps, context_generation_rate=-1):
         rewards = []
         environment = self.environment.copy()
-        num_slots = environment.get_number_of_slots()
+        num_slots = environment.get_number_of_all_slots()
         slot_algos = []
         slot_dict = []
-        for subcampaign in self.environment.subcampaigns:
-            num_interested_users = subcampaign.sample(save_sample=False)
-            for slot in subcampaign.slots:
-                slot_algo = Slot_algo(subcampaign.id, slot.id, self.budget_discretization_steps.copy(), self.GPTS_prior)
-                samples = [[k * self.daily_budget / 50 for k in range(51)],
-                           [sum(slot.sample_for_all_classes(
-                               k * self.daily_budget / 50,
-                               interested_users=num_interested_users, save_sample=False)) for k in range(51)]]
-                slot_algo.learn_gp_kernel_hyperparameters(samples)
-                slot_algos.append(slot_algo)
-                slot_dict.appen({'subcampaign': subcampaign.id,
-                                 'slot': slot.id
-                                 })
+        for subcampaign in environment.subcampaigns:
+            subcampaign.sample_interested_users()
+            samples = [[k * self.daily_budget / 50 for k in range(51)],
+                       [subcampaign.sample_clicks_for_all_classes_agg(k * self.daily_budget / 50, save_sample=False)
+                        for k in range(51)]]
 
+            for slot_id in range(subcampaign.slot_num):
+                slot_algo = SlotAlgorithm(subcampaign.name, slot_id, self.budget_discretization_steps.copy(),
+                                          self.GPTS_prior)
+                slot_samples = [samples[0], np.array(samples[1])[:, slot_id]]
+                slot_algo.learn_gp_kernel_hyperparameters(slot_samples)
+                slot_algos.append(slot_algo)
+                slot_dict.append({'subcampaign': subcampaign.name,
+                                  'slot': slot_id
+                                  })
         # Run only when without context generation
         if context_generation_rate < 0:
             regression_errors_max = [[] for _ in range(num_slots)]
@@ -60,11 +68,12 @@ class Experiment:
             for (slot_idx, budget_assigned) in super_arm:
                 subcampaign_id = slot_dict[slot_idx]['subcampaign']
                 slot_id = slot_dict[slot_idx]['slot']
-                num_interested_users = environment.get_subcampaign(subcampaign_id).sample(save_sample=False)
+                environment.get_subcampaign(subcampaign_id).sample_interested_users()
 
-                reward = environment.get_subcampaign(subcampaign_id).get_slot(slot_id).sample_for_all_classes(
-                    budget_assigned, interested_users=num_interested_users, save_sample=False)
-                total_reward += sum(reward)
+                reward = environment.get_subcampaign(subcampaign_id).sample_clicks_for_all_classes_agg(budget_assigned,
+                                                                                                       save_sample=False)
+                reward = reward[slot_id]
+                total_reward += reward
 
                 # Fit multiple point to the GPs (one per each class of user inside this subcampaing)
                 slot_algos[slot_idx].update(budget_assigned, reward)
@@ -83,7 +92,7 @@ class Experiment:
                     subcampaign_id = slot_dict[i]['subcampaign']
                     slot_id = slot_dict[i]['slot']
                     regression_rewards = [(x,
-                                           environment.subcampaigns[subcampaign_id].get_slot(slot_id).get_real(x))
+                                           environment.subcampaigns[subcampaign_id].get_real_agg(x)[slot_id])
                                           for x in
                                           self.budget_discretization_steps]
                     regression_errors_max[i].append(
@@ -93,6 +102,7 @@ class Experiment:
 
             print("-------------------------")
 
+            # TODO: Context generation will be added
             if context_generation_rate > 0:
                 return (rewards, environment, slot_algos, slot_dict)
             else:

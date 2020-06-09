@@ -28,7 +28,9 @@ class Environment:
     def copy(self):
         return Environment([s.copy() for s in self.subcampaigns])
 
-    def get_number_of_slots(self):
+    def get_number_of_all_slots(self):
         num_slots = 0
         for subcampaign in self.subcampaigns:
-            num_slots += len(subcampaign.slots)
+            num_slots += len(subcampaign.classes[0].prominence_rates)
+
+        return num_slots

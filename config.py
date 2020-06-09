@@ -1,6 +1,10 @@
 # I've chosen small variances because I think they can't exceed 1, true?
 # Let's say that 0.5 <= mean <= 0.01
 # I put always the same noise_variance (0.005)
+# This config file is not used.
+# We use the file under configuration folder
+# I keep this only fot the name of subcampaigns and the values for some paramaters
+# In future this will be deleted from the project
 configuration = [
     # Subcampaign 1 (Amazon subcampaign)(women)
     # the 1st () indicates the type of website and its consequence

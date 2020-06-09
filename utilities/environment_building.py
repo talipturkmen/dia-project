@@ -3,71 +3,85 @@ Created on 28/05/20
 @author: Talip Turkmen
 """
 
+import numpy as np
+
+from configuration.config import get_configuration
+from environment.classes import CampaignClass
 from environment.environment import Environment
 from environment.subcampaign import Subcampaign
-from environment.slot import Slot
-from environment.classes import CampaignClass, ClickClass
-from config.config import get_configuration
+from experiment.subcampaign_algo import SlotAlgorithm
 
 
 def build_environment(configuration):
     subcampaigns = []
     # LOOP OVER SUBCAMPAIGNS
     for ii, subcampaign_data in enumerate(configuration):
-        classes_ = []
-        slots = []
-        slot_classes = []
+        classes = []
 
         #  LOOP OVER CLASSES
         class_id = 0
-        for classes in subcampaign_data:
-            user_class = CampaignClass(classes['class_name'], class_id, mean=classes['mean'], sigma=classes['variance'])
-            # LOOP OVER SLOTS
-            slot_id = 0
-            for slot in classes['click_probabilities']:
-                slot_class = ClickClass(user_class.name,
-                                        user_class.id,
-                                        slot_id=slot_id,
-                                        sigma=slot['sigma'],
-                                        max_value=slot['max_value'],
-                                        offset=slot['offset'],
-                                        speed=slot['speed'])
-                slot_classes.append(slot_class)
-                slot_id += 1
+        for class_ in subcampaign_data:
+            user_class = CampaignClass(name=class_['class_name'],
+                                       id=class_id,
+                                       mean=class_['mean'],
+                                       variance=class_['variance'],
+                                       sigma=class_['sigma'],
+                                       max_value=class_['max_value'],
+                                       offset=class_['offset'],
+                                       speed=class_['speed'],
+                                       prominence_rates=np.array(class_['slots_prominence_rates']))
 
-            classes_.append(user_class)
+            classes.append(user_class)
             class_id += 1
 
-        for i in range(slot_id):
-            classes = []
-            for j in range(len(slot_classes)):
-                if j % slot_id == i:
-                    classes.append(slot_classes[j])
-
-            slots.append(Slot(i, classes))
-
-        subcampaigns.append(Subcampaign(ii, classes_, slots))
+        subcampaigns.append(Subcampaign(ii, classes))
 
     return Environment(subcampaigns)
 
-    if __name__ == '__main__':
-        ### FOR TESTING PURPOSES ####
-        ### PLEASE SEE THE USAGE BELOW FOR SAMPLING ####
-        env = build_environment(get_configuration())
-        subcampaign0 = env.get_subcampaign(0)
-        interested_users = subcampaign0.sample()
 
-        print('Expected interested users per class for subcampaign0', interested_users)
+if __name__ == '__main__':
+    # FOR TESTING PURPOSES
+    # PLEASE SEE THE USAGE BELOW FOR SAMPLING
 
-        slot0 = subcampaign0.get_slot(0)
-        expected_click_for_slot0_and_class2 = slot0.sample(x=80, interested_users=interested_users[1], class_id=1)
-        print(
-            'Expected number of clicks for the subcampaign:0 and the slot:0 and class 2 with bid:80',
-            expected_click_for_slot0_and_class2)
+    env = build_environment(get_configuration())
+    subcampaign0 = env.get_subcampaign(0)
+    interested_users = subcampaign0.sample_interested_users()
 
-        expexted_click_for_all_classes_and_slot0 = slot0.sample_for_all_classes(x=80,
-                                                                                interested_users=interested_users, )
-        print(
-            'Expected number of clicks for the subcampaign:0 and the slot:0 and all classes with bid:80 ',
-            expexted_click_for_all_classes_and_slot0)
-        exit(0)
+    print('Expected interested users per class for subcampaign0', interested_users)
+
+    expected_clicks_for_subcampaign0_class1 = subcampaign0.sample_clicks(x=80, class_id=1)
+    print('Expected number of clicks for the subcampaign0 wrt slots:', expected_clicks_for_subcampaign0_class1)
+    print('Expected number of clicks for the subcampaign0 slot:0:', expected_clicks_for_subcampaign0_class1[0])
+
+    expected_click_for_all_classes_of_subcampaign0 = subcampaign0.sample_clicks_for_all_classes_agg(x=80)
+    print(
+        'Expected number of clicks for the subcampaign:0 and all classes with bid:80 ',
+        expected_click_for_all_classes_of_subcampaign0)
+    print(
+        'Expected number of clicks for the subcampaign:0 class:aggreagated slot:0 and all classes with bid:80 ',
+        expected_click_for_all_classes_of_subcampaign0[0])
+
+    daily_budget = 100
+    budget_discretization_density = 20
+    budget_discretization_steps = [i * daily_budget / budget_discretization_density for i in
+                                   range(budget_discretization_density + 1)]
+    GPTS_prior = lambda x: 3 * x
+
+    slot_algos = []
+    slot_dict = []
+    for subcampaign in env.subcampaigns:
+        subcampaign.sample_interested_users()
+        samples = [[k * daily_budget / 50 for k in range(51)],
+                   [subcampaign.sample_clicks_for_all_classes_agg(k * daily_budget / 50, save_sample=False)
+                    for k in range(51)]]
+
+        for slot_id in range(len(subcampaign.classes[0].prominence_rates)):
+            slot_algo = SlotAlgorithm(subcampaign.name, slot_id, budget_discretization_steps.copy(), GPTS_prior)
+            slot_samples = [samples[0], np.array(samples[1])[:, slot_id]]
+            slot_algo.learn_gp_kernel_hyperparameters(slot_samples)
+            slot_algos.append(slot_algo)
+            slot_dict.append({'subcampaign': subcampaign.name,
+                              'slot': slot_id
+                              })
+
+    exit(0)

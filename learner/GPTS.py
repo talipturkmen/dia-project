@@ -1,9 +1,15 @@
+"""
+Created on 09/06/20
+@author: Talip Turkmen
+"""
+
 import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
 
 
 class GPTS:
+
     def __init__(self, arms, kernel=C(1.0, (1e-3, 1e3)) * RBF(1.0, (1e-3, 1e3)), alpha=10.0, prior=None):
         self.n_arms = len(arms)
         self.predicted_arms = np.zeros(self.n_arms)
