@@ -1,0 +1,107 @@
+{
+  "seeds": 10,
+  "days": 365,
+  "days_campaign": 180,
+  "step3": {
+    "UCB1": {
+      "cumulative_regret_mean": 727.5314473461359,
+      "cumulative_regret_ci95": 17.38461151015704,
+      "daily_regret_last_10pct": 1.5894036057139838,
+      "daily_regret_first_day": 2.6384069213668244
+    },
+    "TS": {
+      "cumulative_regret_mean": 393.81302003583016,
+      "cumulative_regret_ci95": 34.27386943356772,
+      "daily_regret_last_10pct": 0.4783635539621421,
+      "daily_regret_first_day": 6.947488857047614
+    }
+  },
+  "step4": {
+    "no contexts": {
+      "cumulative_regret_mean": 1995.5664037484464,
+      "cumulative_regret_ci95": 32.975093418062876,
+      "daily_regret_last_10pct": 4.865143005875802,
+      "daily_regret_first_day": 11.09269326129725
+    },
+    "weekly context generation": {
+      "cumulative_regret_mean": 1331.83826937905,
+      "cumulative_regret_ci95": 32.129631391861935,
+      "daily_regret_last_10pct": 3.160933805207054,
+      "daily_regret_first_day": 11.632700899965025
+    },
+    "final_contexts_seed0": {
+      "News": [
+        "young",
+        "older \u00b7 mobile",
+        "older \u00b7 desktop"
+      ],
+      "Tech blog": [
+        "young",
+        "older \u00b7 mobile",
+        "older \u00b7 desktop"
+      ],
+      "Sports": [
+        "all users"
+      ],
+      "Lifestyle": [
+        "young",
+        "older"
+      ]
+    }
+  },
+  "step5": {
+    "News": {
+      "clicks_per_auction_at_bid_1": 0.04975184975000001,
+      "price_per_click_at_bid_1": 0.8260677124840305
+    },
+    "Tech blog": {
+      "clicks_per_auction_at_bid_1": 0.0951369271,
+      "price_per_click_at_bid_1": 0.722686483509588
+    },
+    "Sports": {
+      "clicks_per_auction_at_bid_1": 0.0630106528,
+      "price_per_click_at_bid_1": 0.6003712817661545
+    },
+    "Lifestyle": {
+      "clicks_per_auction_at_bid_1": 0.0774801111,
+      "price_per_click_at_bid_1": 0.5277230060696404
+    }
+  },
+  "campaign": {
+    "total_daily_budget": 23.0,
+    "clairvoyant_daily_value": 32.369,
+    "clairvoyant_budgets": {
+      "News": 3.4499999999999997,
+      "Tech blog": 9.2,
+      "Sports": 4.6,
+      "Lifestyle": 5.75
+    },
+    "clairvoyant_bids": {
+      "News": 1.0,
+      "Tech blog": 1.0,
+      "Sports": 1.0,
+      "Lifestyle": 0.8
+    }
+  },
+  "step6": {
+    "cumulative_regret_mean": 949.4434999999994,
+    "cumulative_regret_ci95": 45.11505459922156,
+    "daily_regret_last_10pct": 1.3731499999999985,
+    "daily_regret_first_day": 12.07023333333333,
+    "clairvoyant_total": 5826.42
+  },
+  "step7": {
+    "publisher": {
+      "cumulative_regret_mean": 244.94028610604045,
+      "cumulative_regret_ci95": 28.4203573355968,
+      "daily_regret_last_10pct": 0.814326761668621,
+      "daily_regret_first_day": 8.312253006789103
+    },
+    "advertiser": {
+      "cumulative_regret_mean": 1195.2600000000007,
+      "cumulative_regret_ci95": 68.14652015949827,
+      "daily_regret_last_10pct": 4.4945555555555545,
+      "daily_regret_first_day": -17.201
+    }
+  }
+}

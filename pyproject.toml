@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dia"
+version = "1.0.0"
+description = "Matching + advertising with online learning: combinatorial bandits, context generation, VCG auctions and GP-TS budget optimization"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24", "scipy>=1.10", "matplotlib>=3.7"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+dia = "dia.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dia"]
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["legacy"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
