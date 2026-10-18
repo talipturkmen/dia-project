@@ -133,14 +133,10 @@ src/dia/
   plotting.py      figures
   cli.py           `python -m dia run`
 tests/             matching vs SciPy, VCG properties, knapsack vs brute force, learners, contexts, CLI
-legacy/            the original 2020 code (see below)
+legacy/            the original 2020 code
 ```
 
 **Matching.** `hungarian()` is a from-scratch O(n²m) Hungarian algorithm. The simulations use `batch_assign` instead: with 7 ads and 4 slots there are only 840 possible assignments, so it scores all of them for a whole day's auctions at once. That keeps the welfare, regret and VCG calculations vectorized across auctions. The tests check both against `scipy.optimize.linear_sum_assignment`.
-
-## History
-
-This started as a 2020 team project for *Data Intelligence Applications* at Politecnico di Milano. The original code is kept in [`legacy/`](legacy/) and tagged [`v2020-original`](https://github.com/talipturkmen/dia-project/tree/v2020-original). It covered the environment and a first GP-TS + knapsack loop. It did not run the experiments end to end: a `return` inside the time loop stopped every experiment after day 1, and the Hungarian algorithm crashed on a global variable. Parts 3, 4, 5 and 7 were not implemented. In 2026 the project was rebuilt from the original design and completed.
 
 ## Team
 
