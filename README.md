@@ -143,5 +143,3 @@ legacy/            the original 2020 code
 - Talip Turkmen ([@talipturkmen](https://github.com/talipturkmen))
 - Anne Daniele Durif ([@anne-durif](https://github.com/anne-durif))
 - Julian Andreas Haug ([@Schneeflittchen](https://github.com/Schneeflittchen))
-- Alireza Fathollah Pour
-- Chindwendu Jane Ahanonu
